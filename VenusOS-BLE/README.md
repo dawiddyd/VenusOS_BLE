@@ -8,7 +8,7 @@ The project vendors the BLE parser logic from [`victron_ble`](https://github.com
 
 ## Current Status
 
-Tested on Venus OS 3.73/3.80-class Raspberry Pi installations with Python 3.12 and no `pip` requirement for the Venus D-Bus path.
+Tested on Venus OS 3.70/3.73/3.80-class Raspberry Pi installations with Python 3.12 and no `pip` requirement for the Venus D-Bus path.
 
 Supported D-Bus device mappings:
 
@@ -52,6 +52,15 @@ When the manual run works, install the runit service:
 ```bash
 cd /data/victron-ble-dbus
 ./venus-os/install-service.sh
+```
+
+On Venus OS 3.70 the runtime `/service` directory may not keep custom service links across reboot. The installer therefore also adds a persistent boot hook in `/data/rc.local` that recreates `/service/victron-ble-dbus` and starts the service after boot.
+
+After install, verify:
+
+```bash
+svstat /service/victron-ble-dbus
+dbus -y | grep -i -E 'smartshunt|orion|sense|solar|charger'
 ```
 
 Service control on Venus OS:
@@ -126,6 +135,8 @@ dbus -y com.victronenergy.charger.smartcharger /Temperature GetValue
 ```
 
 The bridge sets `/Connected` to `0` when no BLE advertisement is seen for `connected_timeout_seconds`.
+
+For Orion XS, unknown `OffReason` values are kept as raw integers instead of failing the parse. For example, `/DeviceOffReason = 129` is valid output when the device reports a newer or undocumented off reason.
 
 ## Regular Linux / MQTT / InfluxDB
 
@@ -218,6 +229,42 @@ quit
 ```
 
 On Raspberry Pi, also check that Bluetooth is not disabled in `/boot/firmware/config.txt` or `/boot/config.txt` with an overlay such as `dtoverlay=disable-bt`.
+
+
+### Venus OS service disappears after reboot
+
+On some Venus OS 3.70 installations `/service/victron-ble-dbus` is not persistent after reboot. Run the installer from `/data/victron-ble-dbus`; it writes a boot hook to `/data/rc.local`:
+
+```bash
+cd /data/victron-ble-dbus
+./venus-os/install-service.sh
+cat /data/rc.local
+```
+
+After reboot, check:
+
+```bash
+svstat /service/victron-ble-dbus
+dbus -y | grep -i -E 'smartshunt|orion|sense|solar|charger'
+```
+
+If the service link is missing, run `/data/rc.local` manually to diagnose:
+
+```bash
+sh -x /data/rc.local
+ls -l /service/victron-ble-dbus
+```
+
+### BlueZ discovery methods missing on Venus OS
+
+Some Venus OS BlueZ builds expose managed BLE device objects but do not expose `SetDiscoveryFilter` or `StartDiscovery` on `org.bluez.Adapter1`. The scanner logs a warning and continues by reading existing BlueZ managed objects and listening for property events.
+
+Warnings like these are acceptable if advertisements are still parsed:
+
+```text
+BlueZ SetDiscoveryFilter failed; continuing without discovery filter
+BlueZ StartDiscovery failed; continuing with existing BlueZ device events
+```
 
 ### Device configured but values stay empty
 

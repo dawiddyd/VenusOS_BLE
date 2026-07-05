@@ -19,3 +19,8 @@ smartcharger: ac_charger, charger
 ```
 
 Real advertisement keys must never be committed. Use placeholders in public examples.
+
+
+## Parser Robustness
+
+Some devices can report values newer than the vendored enum tables. Orion XS `off_reason` is intentionally parsed with a fallback: known values become enum names, unknown values remain raw integers. This prevents a single undocumented value such as `129` from dropping the whole BLE packet.
