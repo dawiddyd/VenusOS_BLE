@@ -1,0 +1,49 @@
+{
+  "notes": [
+    "Example map for bluetti_ac180_reader.py mqtt.",
+    "Addresses are absolute Modbus register addresses returned by the poll range.",
+    "Start with dump/poll output, compare with the Bluetti app, then adjust these addresses."
+  ],
+  "fields": [
+    {
+      "name": "state_of_charge",
+      "address": 0,
+      "type": "u16",
+      "scale": 1,
+      "unit": "%"
+    },
+    {
+      "name": "ac_output_power",
+      "address": 1,
+      "type": "i16",
+      "scale": 1,
+      "unit": "W"
+    },
+    {
+      "name": "dc_input_power",
+      "address": 2,
+      "type": "i16",
+      "scale": 1,
+      "unit": "W"
+    },
+    {
+      "name": "battery_voltage",
+      "address": 3,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "V"
+    },
+    {
+      "name": "ac_output_enabled",
+      "address": 4,
+      "type": "u16",
+      "bit": 0
+    },
+    {
+      "name": "dc_output_enabled",
+      "address": 4,
+      "type": "u16",
+      "bit": 1
+    }
+  ]
+}

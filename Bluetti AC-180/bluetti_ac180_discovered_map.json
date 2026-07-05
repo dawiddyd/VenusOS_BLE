@@ -1,0 +1,196 @@
+{
+  "notes": [
+    "Map built from the AC180 registers discovered on device AC1802313001325641.",
+    "Known-good: device_type decodes to AC180 from registers 110..112.",
+    "Likely: battery_voltage=100 scaled by 0.01 gives 33.30 V; state_of_charge=102 gives 83%.",
+    "Confirmed by user: register 140 is DC output load in W.",
+    "Register 101 behaves like inverter/battery-side current in 0.1 A, not AC watts directly.",
+    "Confirmed from load samples: register 142 is AC output load in W.",
+    "Confirmed: registers 104 and 105 are runtime remaining in minutes. The AC180 display shows decimal hours, e.g. raw 5176 min = 86.3H.",
+    "Confirmed: register 124 is output mode bitmask: 1 base, +2 AC enabled, +4 DC enabled.",
+    "Confirmed from AC charging sample in silent mode: register 146 is AC input power in W.",
+    "Confirmed: register 103 is AC charging status: 1 while connected to grid/charging, 0 when disconnected.",
+    "Confirmed: register 123 is internal temperature in C.",
+    "Confirmed: register 160 is charging mode: 0 Standard, 1 Silent, 2 Turbo.",
+    "Confirmed: register 161 is AC input/grid status: 2 when grid is connected, 0 when disconnected.",
+    "Poll with --ranges 0:21 100:67."
+  ],
+  "fields": [
+    {
+      "name": "battery_voltage",
+      "address": 100,
+      "type": "u16",
+      "scale": 0.01,
+      "unit": "V"
+    },
+    {
+      "name": "inverter_battery_current",
+      "address": 101,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "A"
+    },
+    {
+      "name": "inverter_dc_power_estimate",
+      "formula": "multiply",
+      "sources": [
+        "battery_voltage",
+        "inverter_battery_current"
+      ],
+      "scale": 1,
+      "round": 0,
+      "unit": "W",
+      "note": "Estimate: battery_voltage * inverter_battery_current. This is not guaranteed to be AC output watts."
+    },
+    {
+      "name": "state_of_charge",
+      "address": 102,
+      "type": "u16",
+      "unit": "%"
+    },
+    {
+      "name": "ac_charging_status",
+      "address": 103,
+      "type": "u16"
+    },
+    {
+      "name": "ac_charging",
+      "address": 103,
+      "type": "u16",
+      "equals": 1
+    },
+    {
+      "name": "runtime_remaining_minutes",
+      "address": 104,
+      "type": "u16",
+      "unit": "min"
+    },
+    {
+      "name": "runtime_remaining_minutes_duplicate",
+      "address": 105,
+      "type": "u16",
+      "unit": "min"
+    },
+    {
+      "name": "runtime_remaining_hours",
+      "address": 104,
+      "type": "u16",
+      "scale": 0.0166666667,
+      "round": 1,
+      "unit": "h"
+    },
+    {
+      "name": "device_type",
+      "address": 110,
+      "type": "swap_string",
+      "size": 3
+    },
+    {
+      "name": "ac_output_status_candidate",
+      "address": 120,
+      "type": "u16"
+    },
+    {
+      "name": "dc_output_status_candidate",
+      "address": 121,
+      "type": "u16"
+    },
+    {
+      "name": "grid_or_inverter_status_candidate",
+      "address": 122,
+      "type": "u16"
+    },
+    {
+      "name": "internal_temperature",
+      "address": 123,
+      "type": "u16",
+      "unit": "C"
+    },
+    {
+      "name": "output_mode_raw",
+      "address": 124,
+      "type": "u16"
+    },
+    {
+      "name": "ac_output_enabled",
+      "address": 124,
+      "type": "u16",
+      "bit": 1
+    },
+    {
+      "name": "dc_output_enabled",
+      "address": 124,
+      "type": "u16",
+      "bit": 2
+    },
+    {
+      "name": "dc_output_power",
+      "address": 140,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "ac_output_power",
+      "address": 142,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "ac_input_power",
+      "address": 146,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "total_output_power",
+      "formula": "sum",
+      "sources": [
+        "ac_output_power",
+        "dc_output_power"
+      ],
+      "unit": "W"
+    },
+    {
+      "name": "net_input_minus_output_power",
+      "formula": "sum",
+      "sources": [
+        "ac_input_power",
+        "ac_output_power",
+        "dc_output_power"
+      ],
+      "weights": [
+        1,
+        -1,
+        -1
+      ],
+      "unit": "W",
+      "note": "Positive means charging/input exceeds output loads; ignores conversion losses and DC/PV inputs not yet mapped."
+    },
+    {
+      "name": "charging_mode_raw",
+      "address": 160,
+      "type": "u16"
+    },
+    {
+      "name": "charging_mode",
+      "address": 160,
+      "type": "u16",
+      "enum": {
+        "0": "Standard",
+        "1": "Silent",
+        "2": "Turbo"
+      }
+    },
+    {
+      "name": "ac_input_status",
+      "address": 161,
+      "type": "u16"
+    },
+    {
+      "name": "ac_input_connected",
+      "address": 161,
+      "type": "u16",
+      "equals": 2
+    }
+  ]
+}

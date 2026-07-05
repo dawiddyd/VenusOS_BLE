@@ -1,0 +1,149 @@
+{
+  "notes": [
+    "Candidate AC180 map based on common Bluetti BLE/Modbus fields used by bluetti_mqtt for nearby models.",
+    "Validate against the Bluetti app before relying on these values for automation.",
+    "Poll with --ranges 36:14 70:21 91:3 so all fields below are included without crossing invalid address gaps."
+  ],
+  "fields": [
+    {
+      "name": "dc_input_power",
+      "address": 36,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "ac_input_power",
+      "address": 37,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "ac_output_power",
+      "address": 38,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "dc_output_power",
+      "address": 39,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "power_generation",
+      "address": 41,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "kWh"
+    },
+    {
+      "name": "state_of_charge",
+      "address": 43,
+      "type": "u16",
+      "unit": "%"
+    },
+    {
+      "name": "ac_output_on",
+      "address": 48,
+      "type": "u16"
+    },
+    {
+      "name": "dc_output_on",
+      "address": 49,
+      "type": "u16"
+    },
+    {
+      "name": "ac_output_mode",
+      "address": 70,
+      "type": "u16"
+    },
+    {
+      "name": "ac_output_voltage",
+      "address": 71,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "V"
+    },
+    {
+      "name": "ac_output_current",
+      "address": 72,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "A"
+    },
+    {
+      "name": "ac_output_power_detail",
+      "address": 73,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "ac_output_frequency",
+      "address": 74,
+      "type": "u16",
+      "scale": 0.01,
+      "unit": "Hz"
+    },
+    {
+      "name": "ac_input_voltage",
+      "address": 77,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "V"
+    },
+    {
+      "name": "ac_input_current",
+      "address": 78,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "A"
+    },
+    {
+      "name": "ac_input_power_detail",
+      "address": 79,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "ac_input_frequency",
+      "address": 80,
+      "type": "u16",
+      "scale": 0.01,
+      "unit": "Hz"
+    },
+    {
+      "name": "dc_input_voltage",
+      "address": 86,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "V"
+    },
+    {
+      "name": "dc_input_power_detail",
+      "address": 87,
+      "type": "u16",
+      "unit": "W"
+    },
+    {
+      "name": "dc_input_current",
+      "address": 88,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "A"
+    },
+    {
+      "name": "battery_voltage",
+      "address": 92,
+      "type": "u16",
+      "scale": 0.1,
+      "unit": "V"
+    },
+    {
+      "name": "battery_current",
+      "address": 93,
+      "type": "i16",
+      "scale": 0.1,
+      "unit": "A"
+    }
+  ]
+}
