@@ -35,7 +35,7 @@ BLE range matters. If a device is configured but remains `/Connected = 0`, move 
 Copy the project to Venus OS:
 
 ```bash
-scp -r . root@192.168.1.169:/data/victron-ble-dbus
+scp -r . root@venus.local:/data/victron-ble-dbus
 ```
 
 On Venus OS:
